@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RoamEase — Leave Request</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0F1117;
+      --surface:    #181C27;
+      --border:     #252A3A;
+      --text-main:  #EEF0F6;
+      --text-muted: #7A8099;
+      --text-dim:   #4A5068;
+      --green:      #22C55E;
+      --green-dim:  #14532D;
+      --green-glow: rgba(34,197,94,0.15);
+      --red:        #EF4444;
+      --red-dim:    #450A0A;
+      --red-glow:   rgba(239,68,68,0.15);
+      --amber:      #F59E0B;
+      --amber-dim:  #451A03;
+      --amber-glow: rgba(245,158,11,0.15);
+      --blue:       #60A5FA;
+      --blue-dim:   #1E3A5F;
+      --blue-glow:  rgba(96,165,250,0.12);
+      --accent:     #6366F1;
+      --radius:     14px;
+      --font:       'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    html, body {
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: var(--font);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-top: 0;
+    }
+
+    /* header strip */
+    .card-header {
+      padding: 20px 24px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-mark {
+      width: 32px; height: 32px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+    }
+    .logo-text { font-size: 15px; font-weight: 700; color: var(--text-main); }
+    .logo-sub  { font-size: 12px; color: var(--text-dim); margin-top: 1px; }
+
+    /* body */
+    .card-body { padding: 28px 24px; }
+
+    /* state icon */
+    .state-icon {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 28px;
+    }
+    .state-icon.green  { background: var(--green-glow);  border: 1.5px solid var(--green); }
+    .state-icon.red    { background: var(--red-glow);    border: 1.5px solid var(--red); }
+    .state-icon.amber  { background: var(--amber-glow);  border: 1.5px solid var(--amber); }
+    .state-icon.blue   { background: var(--blue-glow);   border: 1.5px solid var(--blue); }
+
+    .state-title {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .state-title.green  { color: var(--green); }
+    .state-title.red    { color: var(--red); }
+    .state-title.amber  { color: var(--amber); }
+    .state-title.blue   { color: var(--blue); }
+
+    .state-desc {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    /* leave details block */
+    .details {
+      background: #13161F;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .details-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 6px 0;
+      border-bottom: 1px solid #1C2030;
+      gap: 12px;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-key   { font-size: 13px; color: var(--text-dim); flex-shrink: 0; }
+    .detail-value { font-size: 13px; color: var(--text-main); font-weight: 500; text-align: right; }
+
+    /* footer */
+    .card-footer {
+      padding: 14px 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .card-footer p { font-size: 12px; color: var(--text-dim); }
+
+    /* ── SCREENS (visibility) ── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── MOBILE RESPONSIVE ── */
+    @media (max-width: 400px) {
+      .card-body { padding: 20px 16px; }
+      .card-header { padding: 16px; }
+      .state-title { font-size: 18px; }
+      .state-desc { font-size: 13px; }
+      .detail-key, .detail-value { font-size: 12px; }
+      .card-footer p { font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+    
+  <!-- ════════════════════════════════════
+       SCREEN: APPROVE SUCCESS
+  ════════════════════════════════════ -->
+  <div class="card screen {% if screen == 'approve' %}active{% endif %}" id="s-approve">
+    <div class="card-header">
+      <div class="logo-mark">R</div>
+      <div>
+        <div class="logo-text">RoamEase</div>
+        <div class="logo-sub">Hostel Management Platform</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="state-icon green">✓</div>
+      <div class="state-title green">Leave Approved</div>
+      <div class="state-desc">
+        You have successfully approved your child's leave request.
+        The hostel warden will be notified.
+      </div>
+      <div class="details">
+        <div class="details-label">Leave Details</div>
+        <div class="detail-row">
+          <span class="detail-key">Student</span>
+          <span class="detail-value">{{ student_name }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Leave Type</span>
+          <span class="detail-value">{{ leave_type }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">From</span>
+          <span class="detail-value">{{ from_datetime }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">To</span>
+          <span class="detail-value">{{ to_datetime }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Reason</span>
+          <span class="detail-value">{{ leave_reason }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Your Response</span>
+          <span class="detail-value" style="color: var(--green);">✓ Approved</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <p>This page is safe to close. Thank you for your response.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       SCREEN: REJECT SUCCESS
+  ════════════════════════════════════ -->
+  <div class="card screen {% if screen == 'reject' %}active{% endif %}" id="s-reject">
+    <div class="card-header">
+      <div class="logo-mark">R</div>
+      <div>
+        <div class="logo-text">RoamEase</div>
+        <div class="logo-sub">Hostel Management Platform</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="state-icon red">✕</div>
+      <div class="state-title red">Leave Rejected</div>
+      <div class="state-desc">
+        You have rejected your child's leave request.
+        The hostel and your child will be notified.
+      </div>
+      <div class="details">
+        <div class="details-label">Leave Details</div>
+        <div class="detail-row">
+          <span class="detail-key">Student</span>
+          <span class="detail-value">{{ student_name }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Leave Type</span>
+          <span class="detail-value">{{ leave_type }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">From</span>
+          <span class="detail-value">{{ from_datetime }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">To</span>
+          <span class="detail-value">{{ to_datetime }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Reason</span>
+          <span class="detail-value">{{ leave_reason }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Your Response</span>
+          <span class="detail-value" style="color: var(--red);">✕ Rejected</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <p>This page is safe to close. Thank you for your response.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       SCREEN: EXPIRED TOKEN
+  ════════════════════════════════════ -->
+  <div class="card screen {% if screen == 'expired' %}active{% endif %}" id="s-expired">
+    <div class="card-header">
+      <div class="logo-mark">R</div>
+      <div>
+        <div class="logo-text">RoamEase</div>
+        <div class="logo-sub">Hostel Management Platform</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="state-icon amber">⏳</div>
+      <div class="state-title amber">Link Expired</div>
+      <div class="state-desc">
+        This approval link is no longer valid. It may have expired
+        or the leave request has already been closed.
+      </div>
+      <div class="details">
+        <div class="details-label">What may have happened</div>
+        <div class="detail-row">
+          <span class="detail-key">Reason 1</span>
+          <span class="detail-value">Leave was cancelled by student</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Reason 2</span>
+          <span class="detail-value">Link was already used</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Reason 3</span>
+          <span class="detail-value">Leave period has passed</span>
+        </div>
+      </div>
+      <p style="font-size:13px; color:var(--text-muted); text-align:center; line-height:1.6;">
+        If you believe this is a mistake, please contact the hostel warden directly.
+      </p>
+    </div>
+    <div class="card-footer">
+      <p>If your child still needs leave, they must submit a new request.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       SCREEN: ALREADY RESPONDED
+  ════════════════════════════════════ -->
+  <div class="card screen {% if screen == 'already' %}active{% endif %}" id="s-already">
+    <div class="card-header">
+      <div class="logo-mark">R</div>
+      <div>
+        <div class="logo-text">RoamEase</div>
+        <div class="logo-sub">Hostel Management Platform</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="state-icon blue">↩</div>
+      <div class="state-title blue">Already Responded</div>
+      <div class="state-desc">
+        You have already responded to this leave request.
+        Your previous response has been recorded.
+      </div>
+      <div class="details">
+        <div class="details-label">Your Previous Response</div>
+        <div class="detail-row">
+          <span class="detail-key">Student</span>
+          <span class="detail-value">{{ student_name }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Leave Type</span>
+          <span class="detail-value">{{ leave_type }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Your Action</span>
+          {% if previous_response == 'Rejected' %}
+          <span class="detail-value" style="color: var(--red);">{{ previous_response }}</span>
+          {% else %}
+          <span class="detail-value" style="color: var(--green);">{{ previous_response }}</span>
+          {% endif %}
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Responded At</span>
+          <span class="detail-value">{{ responded_at }}</span>
+        </div>
+      </div>
+      <p style="font-size:13px; color:var(--text-muted); text-align:center; line-height:1.6;">
+        No further action is needed from you.
+      </p>
+    </div>
+    <div class="card-footer">
+      <p>This page is safe to close.</p>
+    </div>
+  </div>
+
+</body>
+</html>
