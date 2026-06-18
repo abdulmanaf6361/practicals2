@@ -11,7 +11,7 @@ CREATE TABLE users (
 CREATE TABLE tests (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     title VARCHAR(200) NOT NULL,
-    created_by_id INTEGER NOT NULL,
+    created_by_id INTEGER,
     time_limit INTEGER DEFAULT 30,
     is_published BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_tests_user
