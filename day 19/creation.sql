@@ -17,7 +17,7 @@ CREATE TABLE tests (
     CONSTRAINT fk_tests_user
         FOREIGN KEY (created_by_id)
         REFERENCES users(id)
-        ON DELETE CASCADE
+        ON DELETE SET NULL
 );
 
 -- QUESTIONS
